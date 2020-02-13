@@ -1,6 +1,7 @@
 package com.company;
 
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
@@ -8,18 +9,28 @@ public class Main {
     static Scanner scan = new Scanner(System.in);
     public static void main(String[] args) {
         Random rand = new Random();
+        ArrayList<GameResult> leaders = new ArrayList<>();
         boolean answer;
         String anotherString;
         do {
             System.out.println("What is your name?");
             String name = scan.next();
             System.out.println("Hello," + name);
+            long start = System.currentTimeMillis();
             int myNum = rand.nextInt(100) + 1;
             System.out.println("Cheat: " + myNum);
             for (int i = 0; i < 10; i++) {
                 int userNum = askGuess();
                 if (myNum == userNum) {
+                    GameResult r = new GameResult();
+                    long end = System.currentTimeMillis();
+                    r.name = name;
+                    r.triesCount = i + 1;
+                    r.time = end - start;
+                    leaders.add(r);
+                    System.out.println((end - start)/1000);
                     System.out.println("You win");
+
                     break;
                 }
                 if (i == 9) {
@@ -34,6 +45,9 @@ public class Main {
                 }
             }
         } while (askAnotherGame());
+        for (GameResult r : leaders) {
+            System.out.printf("user:%s tries:%d time:%.1f %n" , r.name , r.triesCount , r.time/1000.0);
+        }
         System.out.println("Goodbye");
     }
     static boolean askAnotherGame() {
